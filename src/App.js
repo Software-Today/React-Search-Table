@@ -12,13 +12,14 @@ function App() {
   tmp_data.map((ele, index) => {
     ele.rank = index + 1;
   });
+
   const [users, setUsers] = useState(tmp_data.slice(0,10));
   const [value, setValue] = useState('');
 
-  const search = function () {
+  const search = () => {
 
     setValue(search_text);
-    
+
     if(search_text !== '') {
       const filtered_user_1 = tmp_data.slice(0,10).filter(checkName);
       if(filtered_user_1[0]) {
@@ -30,6 +31,7 @@ function App() {
           data.push(filtered_user_2[0]);
           setUsers(data);
         } else {
+          alert("This user name does not exist!\nPlease specify an existing user name!");
           setUsers(tmp_data.slice(0,10));
         }
       }
@@ -38,20 +40,37 @@ function App() {
     }
   };
 
-  function checkName(param) {
+  const checkName = (param) => {
     return param.name === search_text;
+  }
+
+  const onChange = (e) => {
+    search_text = e.target.value;
+    if(search_text === '') {
+      setValue('');
+      setUsers(tmp_data.slice(0,10));
+    }
   }
 
 
   return (
     <div className="App">
       <div>
-        <input type={'text'} name='search' id='search_input' placeholder='input here username' onChange={(e)=> { search_text = e.target.value }}/>
+        <input 
+          type={'text'} 
+          placeholder='input here username' 
+          onChange={ onChange } 
+          onKeyDown={(e) => {if(e.keyCode === 13 ) search();}}
+        />
         <button onClick={search}>Search</button>
       </div>
 
       <div className='table-div'>
-        <Table columns={columns} data={users} search={value}/>
+        <Table 
+          columns={columns} 
+          data={users} 
+          search={value}
+        />
       </div>
     </div>
   );
